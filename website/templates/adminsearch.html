@@ -1,0 +1,85 @@
+{%if what == "reviews"%}
+<div class="admin_reviews">
+    {% for review in show %}
+    <div class="the_store_page_reviews_review  carousel-cell">
+        <div class="user_icon">
+            {% if review.userprofile_pic %}
+            <img src="{{url_for('static', filename='images/' ~ review.userprofile_pic)}}">
+            {% else %}
+            <div class="userprofilenoimg">
+                <h1>{{ review.username[0].upper() }}</h1>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="reviews_info">
+
+            <h2>{{review.username}}</h2>
+
+
+            <div class="review_stars">
+
+                {% for i in range(review.stars) %}
+                <i style="color: orange;" class="fa-solid fa-tag"></i>
+                {% endfor %}
+                {% for i in range(5-review.stars) %}
+                <i class="fa-solid fa-tag"></i>
+                {% endfor %}
+            </div>
+            <h3>{{review.title}}</h3>
+            <p>{{review.text}}</p>
+            <p class="review_created_at">{{review.created_at}}</p>
+            <div class="review_images">
+                {%for review_image in review.images%}
+                <img loading="lazy"
+                    onClick="enlargeImage('{{url_for('static', filename='images/' ~ review_image.url)}}'); return false;"
+                    id="clickforfullscreen" src="{{ url_for('static', filename='images/' ~ review_image.url) }}" />
+                {% endfor %}
+            </div>
+        </div> <span style="margin-top: 1rem" class="material-symbols-outlined delete_review" onclick="delete_item_review({{review.id}})">
+            delete
+        </span>
+
+    </div>
+
+    {% endfor %}
+</div>
+
+
+{%elif what == "stores"%}
+<div class="top_store_contanier main-carousel" data-flickity='{ "autoPlay": true }'>
+    {% for store in show %}
+
+    <div class="top_store  carousel-cell">
+        <div class="topstorePicture">
+            <a href="/store/{{ store.id }}">
+                <img src="{{ url_for('static', filename='images/' ~ store.images[0].name) }}" alt="">
+            </a>
+        </div>
+        <div class="topstoreInfo">
+            <img class="topstoreLogo" src="{{ url_for('static', filename='images/' ~ store.logo)}}" alt="">
+            <div class="topstoreInfotags">
+                {% for tag in store.tags%}
+                <h4> {{ tag.name }}</h4>
+                {% endfor %}
+            </div>
+            <p>{{ store.description }}</p>
+            <span class="material-symbols-outlined delete_store delete_review" onclick="delete_item_store({{store.id}})">delete</span>
+        </div>
+    </div>
+
+    {% endfor %}
+
+
+
+
+    {%elif what == "users"%}
+    {% for user in show %}
+    <div class="admin_querey_user">
+        <h1>{{ user.username }}</h1>
+    </div>
+
+    {% endfor %}
+
+
+    {%endif%}

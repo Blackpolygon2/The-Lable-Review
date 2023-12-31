@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Account{% endblock %}
+{% block content %}
+{%if is_logged_in_user %}
+
+<div class="user_profile_head_img">
+    <img src="{{url_for('static', filename='images/default_user_bg.jpg')}}" alt="" srcset="">
+</div>
+<div class="user_icon user_dislay">
+    <img style="z-index: 3; display: {{user_profile_pic_has}}"
+        src="{{url_for('static', filename='images/' ~ user.profile_pic)}}" alt="" />
+    <div class="userprofilenoimg">
+        <h1 style="z-index: 1;">{{ user.username[0].upper()}}</h1>
+    </div>
+</div>
+<div class="user_profile_info">
+    <h1>Edit profile</h1>
+    <form class="user_profile_form" action="" method="post" enctype="multipart/form-data">
+        <input type="text" name="username" id="username" placeholder="Username" value="{{ user.username }}">
+        <input type="file" name="profile_pic" id="profile_pic" placeholder="Profile Picture" accept="image/*">
+
+        <input type="text" name="firstname" id="firstname" placeholder="firstname" value="{{ user.first_name }}">
+        <input type="text" name="lastname" id="lastname" placeholder="lastname" value="{{ user.last_name }}">
+        <input type="email" name="email" id="email" value="{{ user.email }}" placeholder="email">
+        <button>update</button>
+    </form>
+
+</div>
+<div class="user_profile_reviewsandstore">
+    <h1> Favorite stores</h1>
+    <div class="favorite_store_container main-carousel userprofilefavstore" data-flickity='{ "cellAlign": "left" }'>
+        {% for store in user.favorite_stores%}
+        <div class="favorite_store mini_store_display carousel-cell">
+            <a href="/store/{{ store.id }}">
+                <img src="{{ url_for('static', filename='images/' ~ store.images[0].name) }}" alt="">
+            </a>
+            <div class="favorite_store_info">
+                <h3>{{ store.name }}</h3>
+                <div class="review_stars">
+                    {%if store.overall_rating%}
+                    {% for i in range(store.overall_rating|round) %}
+                    <i style="color: orange; margin: 0rem" class="fa-solid fa-tag"></i>
+                    {% endfor %}
+
+                    {% for i in range(5 -store.overall_rating|round) %}
+                    <i style="margin: 0rem" class="fa-solid fa-tag"></i>
+                    {% endfor %}
+                    {%else%}
+                    <i class="">No ratings</i>
+                    {%endif%}
+                </div>
+
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+    <h1>your reviews</h1>
+    <div class="home_page_reviews main-carousel user_reviews_in_page" data-flickity='{ "cellAlign": "left" }'>
+        {% for review in user.reviews %}
+        <div class="the_store_page_reviews_review carousel-cell">
+            <div class="user_icon">
+                {% if review.userprofile_pic %}
+                <img src="{{url_for('static', filename='images/' ~ review.userprofile_pic)}}">
+                {% else %}
+                <div class="userprofilenoimg">
+                    <h1>{{ review.username[0].upper() }}</h1>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="reviews_info">
+
+                <h2>{{review.username}}</h2>
+
+
+                <div class="review_stars">
+
+                    {% for i in range(review.stars) %}
+                    <i style="color: orange;" class="fa-solid fa-tag"></i>
+                    {% endfor %}
+                    {% for i in range(5-review.stars) %}
+                    <i class="fa-solid fa-tag"></i>
+                    {% endfor %}
+                </div>
+                <h3>{{review.title}}</h3>
+                <p>{{review.text}}</p>
+                <p class="review_created_at">{{review.created_at}}</p>
+                <div class="review_images">
+                    {%for review_image in review.images%}
+                    <img loading="lazy"
+                        onClick="enlargeImage('{{url_for('static', filename='images/' ~ review_image.url)}}'); return false;"
+                        id="clickforfullscreen" src="{{ url_for('static', filename='images/' ~ review_image.url) }}" />
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+</div>
+{% if user.is_admin %}
+<div class="admin_panel">
+    <div class="admin_button_container">
+        <button onclick="adminsearch('reviews'); return false" class="admin_button"
+            id="admin_search_reviews">Reviews</button>
+        <button onclick="adminsearch('stores'); return false" class="admin_button"
+            id="admin_search_stores">Stores</button>
+        <button onclick="adminsearch('users'); return false" class="admin_button" id="admin_search_users">Users</button>
+    </div>
+    <input type="text" name="admin_search" id="admin_search" class="admin_search">
+    <div id="admin_search_results"></div>
+</div>
+{% endif %}
+
+{%else%}
+{% include "error.html" %}
+{%endif%}
+
+
+
+{% endblock %}
+<div id="enlarged_image_container" class="enarged_image_container">
+    <img id="enlarged_image" class="enlarged_image" src="" alt="" />
+</div>

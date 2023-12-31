@@ -1,0 +1,92 @@
+{% extends "base.html" %} {% block title %}stores{% endblock %} {% block content
+%}
+
+<h3 id="add_store" class="add_store">Dont see a store you know add it
+  <span class="material-symbols-rounded add_store"> add </span>
+</h3>
+
+<div id="makeStorePopup" class="makeStorePopup">
+  <form id="StorePopup" class="StorePopup" method="POST" enctype="multipart/form-data">
+
+    <div class="add_store_file_fields">
+      <div class="file">
+        <input class="inputfile" type="file" name="logo" id="logo" accept="image/*" />
+        <button type="button" class="pic_upload">
+          Upload logo (must be transparent)
+        </button>
+        <span class="pic_upload_label"></span>
+      </div>
+
+      <div class="file">
+        <input class="inputfile" type="file" name="pictures[]" id="pictures" accept="image/*" multiple="" required />
+        <button type="button" class="pic_upload">Upload store pictures</button>
+        <span class="pic_upload_label"></span>
+      </div>
+
+      <div class="makestore">
+        <button type="submit">Create Store</button>
+      </div>
+    </div>
+
+    <div class="add_store_text_fields">
+      <input type="text" id="name" name="name" placeholder="Enter the store name" required />
+
+
+      <input  autocomplete="off-street-address" type="text" id="address" name="address"
+        placeholder="Enter the store location (Building number and street name)" />
+      <div class="description">
+        <textarea placeholder="Write a discription of the store." id="description" name="description"
+          required></textarea>
+      </div>
+      <input type="url" id="store_link" name="store_link" placeholder="Give the link to store website if applicable" />
+    </div>
+
+
+    <script type="text/javascript" src="{{ url_for('static', filename='fileUpload.js') }}"></script>
+  </form>
+</div>
+<div class="viewStores">
+  {% for store in stores %}
+
+  <div class="storeInStore">
+    <div class="storePictures">
+      <a href="{{ url_for('views.store_details', store=store.id) }}">
+        <img loading="lazy" src="{{ url_for('static', filename='images/' ~ store.images[0].name) }}" alt="" />
+      </a>
+    </div>
+
+    <div class="storeInfo">
+
+
+      <h1>{{ store.name }}</h1>
+      {% for tag in store.tags %}
+      <div class="tag">
+        <h5>{{ tag.name }}</h5>
+      </div>
+
+      {% endfor %}
+      <div class="storerating">{{ store.rating }}</div>
+      <div class="store_description">
+        <p>{{ store.description }}</p>
+      </div>
+      <div>
+        <div class="review_stars">
+          {%if store.overall_rating%}
+          {% for i in range(store.overall_rating|round) %}
+          <i style="color: orange; margin: 0rem" class="fa-solid fa-tag"></i>
+          {% endfor %}
+
+          {% for i in range(5 -store.overall_rating|round) %}
+          <i style="margin: 0rem" class="fa-solid fa-tag"></i>
+          {% endfor %}
+          {%else%}
+          <i class="">No ratings</i>
+          {%endif%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+</div>
+{% endblock %}

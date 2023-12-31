@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --background-color: #171717;
+  --text-color: #fff;
+  --auth-bg-color: #1c1c1c;
+  --authIcons-fill-color: #fff;
+  --authIcons-hover-fill-color: #242424;
+  --input-width: 250%;
+  --input-height: 3vh;
+  --input-padding: 10%;
+  --input-border-radius: 30px;
+  --input-background: #acacac;
+  --input-color: #fff;
+  --input-font-size: 1em;
+  --input-font-weight: 1000;
+  --login-padding: 10%;
+  --login-border-radius: 30px;
+  --login-width: 100%;
+  --login-font-size: 1em;
+  --login-font-weight: 1000;
+  --login-bg-color: #719c6e;
+  --login-hover-bg-color: #242424;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth {
+  font-weight: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--auth-bg-color);
+  border-radius: var(--input-border-radius);
+  width: 35vw;
+  height: 25vh;
+}
+
+.authIcons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.authIcons * {
+  fill: var(--authIcons-fill-color);
+  padding: 5%;
+  transition: all 0.2s ease 0s;
+}
+
+.authIcons *:hover {
+  fill: var(--authIcons-hover-fill-color);
+}
+
+form * {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input {
+  width: var(--input-width);
+  height: var(--input-height);
+  padding: var(--input-padding);
+  border-radius: var(--input-border-radius);
+  background: var(--input-background);
+  outline: none;
+  border: none;
+  margin-bottom: 10%;
+  color: var(--input-color);
+  font-size: var(--input-font-size);
+  font-weight: var(--input-font-weight);
+}
+
+.form-group1 {
+  margin-top: 20%;
+}
+
+.login {
+  padding: var(--login-padding);
+  border-radius: var(--login-border-radius);
+  width: var(--login-width);
+  font-size: var(--login-font-size);
+  font-weight: var(--login-font-weight);
+  text-align: center;
+  background-color: var(--login-bg-color);
+  outline: none;
+  border: none;
+  transition: all 0.2s ease 0s;
+}
+
+.login:hover {
+  background-color: var(--login-hover-bg-color);
+}
+.sign-up{
+    color: var(--text-color);
+    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+a{
+    text-decoration: none;
+    color: var(--login-bg-color);
+}
+@media screen and (max-width: 900px) {
+  input{
+    width: 100%;
+  }
+  .auth{
+    width: 100%;
+    height: 110%;
+  }
+  .sign-up{
+    padding: 10%;
+  }
+}

@@ -1,0 +1,19 @@
+
+{% for store in qstores%}
+<li class="querystore_list">
+  <div class="querystore">
+    <a href="/store/{{ store.id }}"><img class="querystoreimg" loading="lazy"
+      src="{{ url_for('static', filename='images/' ~ store.images[0].name) }}"" alt="" srcset=""></a>
+<h1>{{ store.name }}</h1>
+                <div class=" review_stars">
+    {% for i in range(store.overall_rating|round) %}
+    <i style="color: orange;" class="fa-solid fa-tag"></i>
+    {% endfor %}
+    {% for i in range(5 -store.overall_rating|round) %}
+    <i class="fa-solid fa-tag"></i>
+    {% endfor %}
+  </div>
+</div>
+<br>
+</li>
+{% endfor %}

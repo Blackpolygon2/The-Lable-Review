@@ -1,0 +1,132 @@
+{% extends "base.html" %} {% block title %}The lable review Home{% endblock %} {% block content
+%}
+<div class="storesHeadScope ">
+    <h1>Top stores</h1>
+    <div class="top_store_contanier main-carousel" data-flickity='{ "autoPlay": true }'>
+        {% for store in TopStores %}
+
+        <div class="top_store  carousel-cell">
+            <div class="topstorePicture">
+                <a href="/store/{{ store.id }}">
+                    <img src="{{ url_for('static', filename='images/' ~ store.images[0].name) }}" alt="">
+                </a>
+            </div>
+            <div class="topstoreInfo">
+                <h1>{{ store.name }}</h1>
+                <div class="topstoreInfotags">
+                    {% for tag in store.tags%}
+                    <h4> {{ tag.name }}</h4>
+                    {% endfor %}
+                </div>
+                <p>{{ store.description }}</p>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+    <h1> Favorite stores</h1>
+    {%if user.is_authenticated%}
+    <div class="favorite_store_container main-carousel" data-flickity='{ "cellAlign": "left" }'>
+        {% if user_store_favorite%}
+        {% for store in user_store_favorite%}
+        <div class="favorite_store mini_store_display carousel-cell">
+            <a href="/store/{{ store.id }}">
+                <img src="{{ url_for('static', filename='images/' ~ store.images[0].name) }}" alt="">
+            </a>
+            <div class="favorite_store_info">
+                <h3>{{ store.name }}</h3>
+                <div class="review_stars">
+                    {%if store.overall_rating%}
+                    {% for i in range(store.overall_rating|round) %}
+                    <i style="color: orange;" class="fa-solid fa-tag"></i>
+                    {% endfor %}
+
+                    {% for i in range(5 -store.overall_rating|round) %}
+                    <i class="fa-solid fa-tag"></i>
+                    {% endfor %}
+                    {%else%}
+                    <i class="">No ratings</i>
+                    {%endif%}
+                </div>
+
+            </div>
+        </div>
+        {%endfor%}
+        {%endif%}
+    </div>
+    {%endif%}
+
+
+    
+    <h1>Reccomended stores</h1>
+    <div class="top_store_contanier main-carousel" data-flickity='{ "cellAlign": "left" }'>
+        {% for store in get_reccomended_stores%}
+        <div class="favorite_store mini_store_display carousel-cell">
+            <a href="/store/{{ store.id }}">
+                <img src="{{ url_for('static', filename='images/' ~ store.images[0].name) }}" alt="">
+            </a>
+            <div class="favorite_store_info">
+                <h3>{{ store.name }}</h3>
+                <div class="review_stars">
+                    {%if store.overall_rating%}
+                    {% for i in range(store.overall_rating|round) %}
+                    <i style="color: orange;" class="fa-solid fa-tag"></i>
+                    {% endfor %}
+
+                    {% for i in range(5 -store.overall_rating|round) %}
+                    <i class="fa-solid fa-tag"></i>
+                    {% endfor %}
+                    {%else%}
+                    <i class="">No ratings</i>
+                    {%endif%}
+                </div>
+
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+    <h1>Recent reviews</h1>
+    <div class="home_page_reviews main-carousel" data-flickity='{ "cellAlign": "left" }'>
+        {% for review in all_reviews %}
+        <div class="the_store_page_reviews_review carousel-cell">
+            <div class="user_icon">
+                {% if review.userprofile_pic %}
+                
+                {% else %}
+                <div class="userprofilenoimg">
+                    <h1>{{ review.username[0].upper() }}</h1>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="reviews_info">
+
+                <h2>{{review.username}}</h2>
+
+
+                <div class="review_stars">
+
+                    {% for i in range(review.stars) %}
+                    <i style="color: orange;" class="fa-solid fa-tag"></i>
+                    {% endfor %}
+                    {% for i in range(5-review.stars) %}
+                    <i class="fa-solid fa-tag"></i>
+                    {% endfor %}
+                </div>
+                <h3>{{review.title}}</h3>
+                <p>{{review.text}}</p>
+                <p class="review_created_at">{{review.created_at}}</p>
+                <div class="review_images">
+                    {%for review_image in review.images%}
+                    <img loading="lazy"
+                        onClick="enlargeImage('{{url_for('static', filename='images/' ~ review_image.url)}}'); return false;"
+                        id="clickforfullscreen" src="{{ url_for('static', filename='images/' ~ review_image.url) }}" />
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+{%endblock%}

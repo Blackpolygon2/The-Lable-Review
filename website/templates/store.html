@@ -1,0 +1,326 @@
+{% extends "base.html" %} {% block title %}{{ store.name }}{% endblock %} {%
+block content %}
+<div class="the_store_page">
+  <div class="the_store_page_logo">
+    <h1>{{ store.name }}</h1>
+  </div>
+  <div class="the_store_page_images">
+    <div class="main-carousel the_store_page_images_carousel" data-flickity="{ }">
+      {% for image in store.images %}
+      <div class="carousel-cell">
+        <img src="{{ url_for('static', filename='images/' ~ image.name) }}" alt="" />
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="the_store_page_tags_and_fav">
+    <div class="the_store_page_tags">
+      {% if store.is_local %}
+      <h5 class="store_address"><a target="_blank" href="https://www.google.com/maps/place/{{ store.address }}"><span
+            style="padding:0px;" class="material-symbols-outlined">
+            pin_drop
+          </span></a></h5>
+      {% endif%}
+      {% if store.is_online %}
+      <h5 class="store_link_tag"><a target="_blank" href="{{store.store_link}}"><span style="padding:0px;"
+            class="material-symbols-outlined">
+            language
+          </span></a></h5>
+      {% endif %}
+      {% for tag in store.tags %}
+      <h5>{{ tag.name }}</h5>
+
+      {% endfor %}
+    </div>
+    <div class="the_store_page_add_favorite">
+      <span onclick="add_to_favorites({{ store.id }}); return false;" class="material-symbols-outlined" style="font-variation-settings:
+  'FILL' {{user_store_favorite}}">
+        favorite
+      </span>
+    </div>
+  </div>
+
+
+  <div class="the_store_page_description">
+    <p>{{ store.description }}</p>
+  </div>
+  <!-- this is where we show reviews needs work -->
+
+  <div class="store_review_breakdown">
+
+    <div class="bar_master_container">
+
+      {% for i in range(5) %}
+      <div class="bar_holder" onclick="store_filter_query('/store/', {{store.id}},{{i+1}}); return false;">
+        <div class="bar_container">
+          <div style="width:{{store_rating_brackdown[i]}}% ; height: 1rem;" class="store_review_breakdown_bar"></div>
+        </div>
+        <div class="bar_info">
+          <h5>{{i+1}}<i style="color: orange;" class="fa-solid fa-tag"></i></h5>
+          <h5>{{store_rating_brackdown[i]}}%</h5>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+    <div class="store_rating">
+      <div style="padding: .6rem;" class="review_stars">
+        {%if store.overall_rating%}
+        {% for i in range(store.overall_rating|round) %}
+        <i style="color: orange; font-size: 1.5rem;" class="fa-solid fa-tag"></i>
+        {% endfor %}
+
+        {% for i in range(5 -store.overall_rating|round) %}
+        <i class="fa-solid fa-tag"></i>
+        {% endfor %}
+        {%else%}
+        <i class="">No ratings</i>
+        {%endif%}
+      </div>
+      <h5 style="font-size: 2rem; margin-left:.4rem ">{{store.overall_rating}}</h5>
+    </div>
+  </div>
+  <div class="the_store_page_reviews">
+    {% if does_user_hav_review %}
+    <h1>Your review</h1>
+    <div style="margin-top: 20px;" class="the_store_page_reviews_review">
+      <div class="user_icon">
+        <div class="userprofilenoimg">
+          <h1 style="z-index: 1;">{{ user.username[0].upper()}}</h1>
+        </div>
+      </div>
+      <div class="reviews_info">
+
+        <h2>{{user.username}}</h2>
+
+
+        <div class="review_stars">
+
+          {% for i in range(user_review.stars) %}
+          <i style="color: orange;" class="fa-solid fa-tag"></i>
+          {% endfor %}
+          {% for i in range(5-user_review.stars) %}
+          <i style="color: --var(--text-color);" class="fa-solid fa-tag"></i>
+          {% endfor %}
+        </div>
+        <h3>{{user_review.title}}</h3>
+        <p>{{user_review.text}}</p>
+
+        <div class="review_images">
+          {%for review_image in user_review.images%}
+          <img onClick="enlargeImage('{{url_for('static', filename='images/' ~ review_image.url)}}'); return false;"
+            src="{{ url_for('static', filename='images/' ~ review_image.url) }}" />
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+
+    {% elif user.is_authenticated %}
+    <div class="the_store_page_reviews_add_review">
+      <span class="material-symbols-rounded md-"> add_circle </span>
+      <h1>Add a review</h1>
+    </div>
+    {% else %}
+    <a href="/login">
+      <div class="the_store_page_reviews_login_add_review">
+        <span class="material-symbols-rounded md-"> login </span>
+        <h1> Log in to add a review</h1>
+      </div>
+    </a>
+    {% endif %}
+
+
+    <h2>Store Reviews</h2>
+    <div class="the_store_page_reviews_reviews_container">
+ 
+      {% if has_query %}
+      
+      
+      
+      {% for review in filter_reviwes %}
+      <div class="the_store_page_reviews_review">
+        <div class="user_icon">
+          <div class="userprofilenoimg">
+            <h1 style="z-index: 1;">{{ review.username[0].upper()}}</h1>
+          </div>
+        </div>
+        <div class="reviews_info">
+
+          <h2>{{review.username}}</h2>
+
+
+          <div class="review_stars">
+
+            {% for i in range(review.stars) %}
+            <i style="color: orange;" class="fa-solid fa-tag"></i>
+            {% endfor %}
+            {% for i in range(5-review.stars) %}
+            <i class="fa-solid fa-tag"></i>
+            {% endfor %}
+          </div>
+          <h3>{{review.title}}</h3>
+          <p>{{review.text}}</p>
+          <p class="review_created_at">{{review.created_at}}</p>
+          <div class="review_images">
+            {%for review_image in review.images%}
+            <img loading="lazy"
+              onClick="enlargeImage('{{url_for('static', filename='images/' ~ review_image.url)}}'); return false;"
+              id="clickforfullscreen" src="{{ url_for('static', filename='images/' ~ review_image.url) }}" />
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+
+      {% else %}
+
+           {% for review in store.reviews %}
+      <div class="the_store_page_reviews_review">
+        <div class="user_icon">
+          <div class="userprofilenoimg">
+            <h1 style="z-index: 1;">{{ review.username[0].upper()}}</h1>
+          </div>
+        </div>
+        <div class="reviews_info">
+
+          <h2>{{review.username}}</h2>
+
+
+          <div class="review_stars">
+
+            {% for i in range(review.stars) %}
+            <i style="color: orange;" class="fa-solid fa-tag"></i>
+            {% endfor %}
+            {% for i in range(5-review.stars) %}
+            <i class="fa-solid fa-tag"></i>
+            {% endfor %}
+          </div>
+          <h3>{{review.title}}</h3>
+          <p>{{review.text}}</p>
+          <p class="review_created_at">{{review.created_at}}</p>
+          <div class="review_images">
+            {%for review_image in review.images%}
+            <img loading="lazy"
+              onClick="enlargeImage('{{url_for('static', filename='images/' ~ review_image.url)}}'); return false;"
+              id="clickforfullscreen" src="{{ url_for('static', filename='images/' ~ review_image.url) }}" />
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+<div id="enlarged_image_container" class="enarged_image_container">
+  <img id="enlarged_image" class="enlarged_image" src="" alt="" />
+</div>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/star.css') }}">
+<div class="the_store_page_reviews_add_review_form_container">
+  <div class="the_store_page_reviews_add_review_form">
+    <form action="" method="POST" enctype="multipart/form-data">
+      <div class="the_store_page_reviews_add_review_form_rating_container">
+        <div class="the_store_page_reviews_add_review_form_star_rating">
+
+          <!-- Rating 1 -->
+          <div class="rating">
+            <h4>Rate the stores reliability</h4>
+            <input type="radio" name="reliability" id="rating1-5" value="5"><label for="rating1-5"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="reliability" id="rating1-4" value="4"><label for="rating1-4"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="reliability" id="rating1-3" value="3"><label for="rating1-3"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="reliability" id="rating1-2" value="2"><label for="rating1-2"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="reliability" id="rating1-1" value="1"><label for="rating1-1"><i
+                class="fa-solid fa-tag"></i></label>
+          </div>
+
+          <!-- Rating 2 -->
+          <div class="rating">
+            <h4>Rate the stores affordability</h4>
+            <input type="radio" name="affordability" id="rating2-5" value="5"><label for="rating2-5"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="affordability" id="rating2-4" value="4"><label for="rating2-4"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="affordability" id="rating2-3" value="3"><label for="rating2-3"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="affordability" id="rating2-2" value="2"><label for="rating2-2"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="affordability" id="rating2-1" value="1"><label for="rating2-1"><i
+                class="fa-solid fa-tag"></i></label>
+          </div>
+
+          <!-- Rating 3 -->
+          {% if store.is_online %}
+          <div class="rating">
+            <h4>Rate the shipping experience</h4>
+            <input type="radio" name="shipping" id="rating3-5" value="5"><label for="rating3-5"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="shipping" id="rating3-4" value="4"><label for="rating3-4"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="shipping" id="rating3-3" value="3"><label for="rating3-3"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="shipping" id="rating3-2" value="2"><label for="rating3-2"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="shipping" id="rating3-1" value="1"><label for="rating3-1"><i
+                class="fa-solid fa-tag"></i></label>
+          </div>
+          {% endif %}
+
+          <!-- Rating 4 -->
+          <div class="rating">
+            <h4>Rate the store custumer service</h4>
+            <input type="radio" name="support" id="rating4-5" value="5"><label for="rating4-5"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="support" id="rating4-4" value="4"><label for="rating4-4"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="support" id="rating4-3" value="3"><label for="rating4-3"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="support" id="rating4-2" value="2"><label for="rating4-2"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="support" id="rating4-1" value="1"><label for="rating4-1"><i
+                class="fa-solid fa-tag"></i></label>
+          </div>
+
+          <!-- Rating 5 -->
+
+          <div class="rating">
+            <h4>Rate the overall experience</h4>
+            <input type="radio" name="store_experience" id="rating5-5" value="5"><label for="rating5-5"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="store_experience" id="rating5-4" value="4"><label for="rating5-4"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="store_experience" id="rating5-3" value="3"><label for="rating5-3"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="store_experience" id="rating5-2" value="2"><label for="rating5-2"><i
+                class="fa-solid fa-tag"></i></label>
+            <input type="radio" name="store_experience" id="rating5-1" value="1"><label for="rating5-1"><i
+                class="fa-solid fa-tag"></i></label>
+          </div>
+        </div>
+      </div>
+      <div class="the_store_page_reviews_add_review_form_review_main_content">
+        <input type="text" placeholder="Enter a title" name="review_title" id="review_title">
+        <textarea name="review" id="review" placeholder="Write a review" required></textarea>
+        <label for="reviewimages">
+          <h2>Upload images</h2>
+        </label>
+        <input class="reviewimages" type="file" name="reviewimages[]" id="reviewimages" multiple="" accept="image/*">
+        <button type="submit">Submit review</button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='add_review.js') }}"></script>
+<script src="{{ url_for('static', filename='rating.js') }}"></script>
+{% endblock %}

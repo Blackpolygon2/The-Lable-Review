@@ -1,0 +1,15 @@
+{% macro display_user_icon(review) %}
+
+<div class="user_icon">
+
+  {% if review.userprofile_pic %}
+    <img src="{{review.userprofile_pic}}">
+  {% else %}  
+    <div class="userprofilenoimg">
+      <h1>{{ review.username[0] }}</h1> 
+    </div>
+  {% endif %}
+
+</div>
+
+{% endmacro %}
